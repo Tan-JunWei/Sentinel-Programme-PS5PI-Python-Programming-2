@@ -2,25 +2,44 @@ import sys
 import os
 import shutil
 import zipfile
+import datetime
+import time
 
 # C:\Users\Admin\Desktop\CS\eJPT\trial
 
-def copy_files(source_directory, destination_directory):
-    for root, dirs, files in os.walk(source_directory):
-        if os.path.commonpath([root]) == os.path.abspath(destination_directory):
-            continue
+def copy_files(source_directory: str, destination_directory: str):
+    backed_up_files = 0
+    start_time = time.time()
+    
+    log_file_path = os.path.join(source_directory, "backup_log.txt")
+    
+    with open(log_file_path, "a") as log_file:
+        for root, dirs, files in os.walk(source_directory):
+            if os.path.commonpath([root]) == os.path.abspath(destination_directory):
+                continue
+            
+            for filename in files:
+                source_file_path = os.path.join(root, filename)
+                relative_path = os.path.relpath(source_file_path, source_directory)
+                destination_file_path = os.path.join(destination_directory, relative_path)
+                os.makedirs(os.path.dirname(destination_file_path), exist_ok=True)
+
+                # Incremental backup logic: Only copy files that have been modified
+                if not os.path.exists(destination_file_path) or os.path.getmtime(source_file_path) > os.path.getmtime(destination_file_path):
+                    backed_up_files += 1
+                    shutil.copy2(source_file_path, destination_file_path)
+
+                    # Log the individual file copy
+                    current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    log_file.write(f"[{current_time}] Copied {source_file_path} to {destination_file_path}\n")
         
-        for filename in files:
-            source_file_path = os.path.join(root, filename)
-            relative_path = os.path.relpath(source_file_path, source_directory)
-            destination_file_path = os.path.join(destination_directory, relative_path)
+        end_time = time.time()
+        
+        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        log_file.write(f"[{current_time}] Total files backed up: {backed_up_files}\n")
+        log_file.write(f"Operation duration: {end_time - start_time:.2f} seconds\n\n")
 
-            os.makedirs(os.path.dirname(destination_file_path), exist_ok=True)
-
-            print(f"Copying {source_file_path} to {destination_file_path}")
-            shutil.copy(source_file_path, destination_file_path)
-
-def compress_directory(directory_path, zip_name):
+def compress_directory(directory_path: str, zip_name: str):
     zip_file_path = f"{zip_name}.zip"
     with zipfile.ZipFile(zip_file_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
         for root, dirs, files in os.walk(directory_path):
