@@ -5,7 +5,7 @@ import zipfile
 import datetime
 import time
 
-# C:\Users\Admin\Desktop\CS\eJPT\trial
+# C:\Users\Admin\Desktop\CS\eJPT\try
 
 def copy_files(source_directory: str, destination_directory: str):
     backed_up_files = 0
@@ -66,3 +66,9 @@ else:
         # Check if the user wants to compress the destination directory
         if len(sys.argv) == 4 and sys.argv[3].lower() == 'compress':
             compress_directory(destination_directory, destination_directory)
+        
+        elif len(sys.argv) == 4:
+            print("Invalid compress flag. Please use 'compress' to compress the destination directory.")
+        
+        else:
+            print("Backup completed successfully.")
