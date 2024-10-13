@@ -5,8 +5,6 @@ import zipfile
 import datetime
 import time
 
-# C:\Users\Admin\Desktop\CS\eJPT\try
-
 def copy_files(source_directory: str, destination_directory: str):
     backed_up_files = 0
     start_time = time.time()
