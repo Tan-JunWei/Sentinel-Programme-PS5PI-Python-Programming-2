@@ -1,6 +1,13 @@
 countries = ['ISRAEL', 'Singapore', 'engLand', 'Brazil']
 
-def starts_with(name_of_country):
-    return name_of_country[0] in ["I","S"] or name_of_country[-1] in ["d","m"]
+def filtered_world_map(countries):
+    # Filter countries that start with "I" or "S" or end with "d" or "m"
+    filtered_countries = filter(lambda country: country[0] in ["I", "S"] or country[-1] in ["d", "m"], countries)
+    
+    capitalized_countries = map(str.capitalize, filtered_countries)
+    
+    return list(capitalized_countries)
 
-print([word.capitalize() for word in list(filter(starts_with, countries))])
+result = filtered_world_map(countries)
+print(result)
+
